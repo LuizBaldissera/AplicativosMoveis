@@ -121,4 +121,30 @@ public class AlunoDAO {
 
     }
 
+    public List<Aluno> buscarAluno(String nomeBusca) {
+        List<Aluno> alunos = new ArrayList<>();
+        Cursor cursor = null;
+        try{
+            // Realiza a consulta SQL utilizando um LIKE para busca parcial por nome.
+            cursor = banco.query("aluno", new String[]{"id", "nome", "cpf", "telefone", "fotoBytes"},
+                    "nome LIKE ?", new String[]{"%" + nomeBusca + "%"},
+                    null, null, null);
+
+            while (cursor.moveToNext()) {
+                Aluno a = new Aluno();
+                a.setId(cursor.getInt(0));
+                a.setNome(cursor.getString(1));
+                a.setCpf(cursor.getString(2));
+                a.setTelefone(cursor.getString(3));
+                a.setFotoBytes(cursor.getBlob(4));
+                alunos.add(a);
+            }
+        }finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return alunos;
+    }
 }
